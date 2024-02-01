@@ -8,8 +8,7 @@ param(
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = "SYS-Automation",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "SYS-Automation-CS",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation",
-    # Dynamic parameters
-    [Parameter(Mandatory = $false)][string] $ProvisioningScriptPath = (Join-Path -Path $ArtifactFolder -ChildPath "Provisioning/provisioning")
+    [Parameter(Mandatory = $false)][string] $CompanyName = "MeerstedeWonen"
 )
 
 Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
@@ -23,11 +22,8 @@ Write-Output "Finished Getting RefreshToken from Keyvault"
 $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
-$Environment = "Production"
-$CompanyName = "MeerstedeWonen"
-
 #Get Company Id
-$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$Environment/api/microsoft/automation/v2.0/companies" 
+$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$SourceEnvironmentName/api/microsoft/automation/v2.0/companies" 
 $CompanyId = ((Invoke-RestMethod -Uri $AutomationURL -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($CompanyName)}).id
 
 #Get Enabled Users MeerstedeWonen
