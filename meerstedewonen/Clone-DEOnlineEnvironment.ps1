@@ -1,20 +1,17 @@
 param(
     # Environment variables
-    [Parameter(Mandatory = $false)][string] $AccountsKeyVaultName = $env:ACCOUNTSKEYVAULTNAME,
-    [Parameter(Mandatory = $false)][string] $GeneralKeyVaultName = $env:GENERALKEYVAULTNAME,
     [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = $env:RESOURCEGROUPNAME,
     # Static parameters
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
-    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault"
+    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "SYS-Automation",
+    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "SYS-Automation-CS",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
 )
 
-Write-Output "Start Import Module BCContainerHelper"
-Import-Module bccontainerhelper
-Write-Output "Finished Import Module BCContainerHelper"
+Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
+Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
+Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
 $RefreshToken = Get-AzKeyVaultSecret -VaultName $RefreshTokenKeyvaultName -Name $RefreshTokenKeyvaultSecretName -AsPlainText
@@ -29,15 +26,19 @@ $BaseURL= "https://api.businesscentral.dynamics.com//admin/v2.19/applications/DE
 # Get Admin Center Environments    
 $Environments = (Invoke-RestMethod -Uri $BaseURL -Method GET -Headers $Header).value
 
-#Rename Enviroment
+#Rename Environment
 if ($BackupEnvironment) {
- $Body = @{NewEnvironmentName="$($EnvironmentToRename)" + "_oud"}
- $json = $Body | ConvertTo-Json
- $Environments = Invoke-RestMethod -Uri "$BaseURL/$EnvironmentToRename/rename" -Method POST -Body $json -Verbose -Headers $Header
+    Write-Output "##[section] Starting: Rename of Environment"
+    $Body = @{NewEnvironmentName="$($TargetEnvironmentName)" + "_oud"}
+    $json = $Body | ConvertTo-Json
+    $Environments = Invoke-RestMethod -Uri "$BaseURL/$TargetEnvironmentName/rename" -Method POST -Body $json -Verbose -Headers $Header
+    Write-Output "##[section] Finished: Rename of Environment"
 }
-
-# Remove Admin Center Environments
-$Environments = Invoke-RestMethod -Uri "$BaseURL/$TargetEnvironmentName" -Method DELETE -Headers $Header
+else {
+    # Remove Admin Center Environments
+    Write-Output "##[section] Starting: Remove of Environment"
+    $Environments = Invoke-RestMethod -Uri "$BaseURL/$TargetEnvironmentName" -Method DELETE -Headers $Header
+}
 
 #Check if Environment is removed
 $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
@@ -46,14 +47,14 @@ while (($Environments.status -eq "Active") -or ($Environments.status -eq "SoftDe
     sleep 15
     $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
 }
-Write-Output "Environment $TargetEnvironmentName succesfully removed"
+Write-Output "##[section] Finished: Remove of Environment"
 
 #Copy Environment
 $Body = @{environmentName=$TargetEnvironmentName;type="Sandbox"}
 $json = $Body | ConvertTo-Json
 $Environments = Invoke-RestMethod -Uri "$BaseURL/$SourceEnvironmentName/copy" -Method POST -Body $json -Verbose -Headers $Header
 
-Write-Output "Clone of environment $SourceEnvironmentName to $TargetEnvironmentName is succesfully scheduled"
+Write-Output "##[section] Starting: Clone of environment $SourceEnvironmentName to $TargetEnvironmentName is succesfully scheduled"
 sleep 15
 $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
 
@@ -63,5 +64,6 @@ while ($Environments.status -eq "Preparing") {
     $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
 }
 
-Write-Output "Environment $TargetEnvironmentName succesfully created"
+Write-Output "##[section] Finished: Clone of environment $SourceEnvironmentName to $TargetEnvironmentName"
+
 

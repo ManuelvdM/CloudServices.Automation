@@ -1,9 +1,7 @@
 param(
     # Environment variables
-    [Parameter(Mandatory = $false)][string] $ArtifactFolder = $env:SYSTEM_ARTIFACTSDIRECTORY,
     [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
-    [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
     # Static parameters
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = "SYS-Automation",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "SYS-Automation-CS",

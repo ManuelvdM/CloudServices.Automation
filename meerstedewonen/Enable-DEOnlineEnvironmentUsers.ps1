@@ -1,40 +1,33 @@
 param(
     # Environment variables
-    [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
-    [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = $env:RESOURCEGROUPNAME,
     # Static parameters
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
-    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault"
-    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
+    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "SYS-Automation",
+    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "SYS-Automation-CS",
+    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation",
+    [Parameter(Mandatory = $false)][string] $CompanyName = "MeerstedeWonen"
 )
 
-Write-Output "Start Import Module BCContainerHelper"
-Import-Module bccontainerhelper
-Write-Output "Finished Import Module BCContainerHelper"
+Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
+Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
+Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
-Write-Output "Start Getting RefreshToken from Keyvault"
+Write-Output "##[section] Starting: Getting RefreshToken from Keyvault"
 $RefreshToken = Get-AzKeyVaultSecret -VaultName $RefreshTokenKeyvaultName -Name $RefreshTokenKeyvaultSecretName -AsPlainText
-Write-Output "Finished Getting RefreshToken from Keyvault"
+Write-Output "##[section] Finished: Getting RefreshToken from Keyvault"
 
 $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
-$Environment = $TargetEnvironmentName
-$CompanyName = "MeerstedeWonen"
-
 #Get Company Id
-$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$Environment/api/microsoft/automation/v2.0/companies" 
+$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$TargetEnvironmentName/api/microsoft/automation/v2.0/companies" 
 $CompanyId = ((Invoke-RestMethod -Uri $AutomationURL -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($CompanyName)}).id
 
 #Get Enabled Users MeerstedeWonen
 $UserAutomationURL = $AutomationURL + "($CompanyId)/users"
 $MeerstedeWonenUsers = (Invoke-RestMethod -Uri $UserAutomationURL -Method GET -Headers $Header).value | where-object {$_.state -eq "Enabled"}
 
-#Test with Alwin.goessens
-#$MeerstedeWonenUsers = $MeerstedeWonenUsers | Where-Object {$_.userName -eq "ALWIN.GOESSENS" }
-
+Write-Output "##[section] Starting: Granting SUPER permissions"
 foreach ($MeerstedeWonenUser in $MeerstedeWonenUsers){
     #Check if User has already SUPER permissions
     $CheckUserPermissionsURL = $AutomationURL + "($CompanyId)/users($($MeerstedeWonenUser.userSecurityId))/userPermissions"
@@ -48,10 +41,10 @@ foreach ($MeerstedeWonenUser in $MeerstedeWonenUsers){
         $json = $Body | ConvertTo-Json
 
         Invoke-RestMethod -Uri $UserPermissionsURL -Method POST -Body $json -Verbose -Headers $Header
-        
         Write-Output "SUPER permissions granted to user $($MeerstedeWonenUser.userName)"
     }
     else {
         Write-Output "User $($MeerstedeWonenUser.userName) already has SUPER permissions"
     }
 }
+Write-Output "##[section] Finished: Granting SUPER permissions"
