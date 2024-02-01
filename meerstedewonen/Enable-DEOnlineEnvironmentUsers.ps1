@@ -21,7 +21,7 @@ Write-Output "Finished Getting RefreshToken from Keyvault"
 $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
-$Environment = "MeerstedeWonen"
+$Environment = $TargetEnvironmentName
 $CompanyName = "MeerstedeWonen"
 
 #Get Company Id
