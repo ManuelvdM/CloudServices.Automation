@@ -1,7 +1,6 @@
 param(
     # Environment variables
-    [Parameter(Mandatory = $false)][string] $AccountsKeyVaultName = $env:ACCOUNTSKEYVAULTNAME,
-    [Parameter(Mandatory = $false)][string] $GeneralKeyVaultName = $env:GENERALKEYVAULTNAME,
+    [Parameter(Mandatory = $false)][string] $ArtifactFolder = $env:SYSTEM_ARTIFACTSDIRECTORY,
     [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
@@ -9,10 +8,12 @@ param(
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
+    # Dynamic parameters
+    [Parameter(Mandatory = $false)][string] $ProvisioningScriptPath = (Join-Path -Path $ArtifactFolder -ChildPath "Provisioning/provisioning")
 )
 
 Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
-. (Join-Path -Path $PSScriptRoot -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
+. (Join-Path -Path $ProvisioningScriptPath -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
 Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
