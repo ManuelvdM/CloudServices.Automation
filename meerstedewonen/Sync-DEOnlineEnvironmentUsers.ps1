@@ -11,9 +11,9 @@ param(
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
 )
 
-Write-Output "Start Import Module BCContainerHelper"
-Import-Module bccontainerhelper
-Write-Output "Finished Import Module BCContainerHelper"
+Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
+. (Join-Path -Path $PSScriptRoot -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
+Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
 $RefreshToken = Get-AzKeyVaultSecret -VaultName $RefreshTokenKeyvaultName -Name $RefreshTokenKeyvaultSecretName -AsPlainText
