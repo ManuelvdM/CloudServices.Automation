@@ -12,8 +12,10 @@ param(
     [Parameter(Mandatory = $false)][string] $ProvisioningScriptPath = (Join-Path -Path $ArtifactFolder -ChildPath "Provisioning/provisioning")
 )
 
+Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
+
 Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
-. (Join-Path -Path $ProvisioningScriptPath -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
+#. (Join-Path -Path $ProvisioningScriptPath -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
 Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
