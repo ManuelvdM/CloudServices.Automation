@@ -5,7 +5,6 @@ param(
     [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = $env:RESOURCEGROUPNAME,
     # Static parameters
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault",
