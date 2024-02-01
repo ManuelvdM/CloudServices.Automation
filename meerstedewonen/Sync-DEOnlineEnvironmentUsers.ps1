@@ -5,17 +5,15 @@ param(
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
     # Static parameters
-    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
-    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault",
+    [Parameter(Mandatory = $false)][string] $ResourceGroupName = "SYS-Automation",
+    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "SYS-Automation-CS",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation",
     # Dynamic parameters
     [Parameter(Mandatory = $false)][string] $ProvisioningScriptPath = (Join-Path -Path $ArtifactFolder -ChildPath "Provisioning/provisioning")
 )
 
-Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
-
 Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
-#. (Join-Path -Path $ProvisioningScriptPath -ChildPath ../common/Install-cdsaPipelineModule.ps1)-ModuleName @("bccontainerhelper")
+Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
 Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
@@ -37,5 +35,7 @@ $UserAutomationURL = $AutomationURL + "($CompanyId)/users?`$top`=1"
 $MeerstedeWonenUsers = (Invoke-RestMethod -Uri $UserAutomationURL -Method GET -Headers $Header).value | where-object {$_.state -eq "Enabled"} 
 
 #GetNewUsersFromOffice365 from Production environment
+Write-Output "##[section] Starting: Get New User From Office 365"
 $GetNewUserFromOffice365URL = $UserAutomationURL = $AutomationURL + "($CompanyId)/users($($MeerstedeWonenUsers.userSecurityId))/Microsoft.NAV.getNewUsersFromOffice365"
 Invoke-RestMethod -Uri $GetNewUserFromOffice365URL -Method POST -Headers $Header 
+Write-Output "##[section] Finished: Get New User From Office 365"
