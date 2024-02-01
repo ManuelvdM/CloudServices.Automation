@@ -8,7 +8,7 @@ param(
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = $env:RESOURCEGROUPNAME,
     # Static parameters
     [Parameter(Mandatory = $false)][string] $ResourceGroupName = "DEOnline-Automation",
-    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault"
+    [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultName = "deonline-keyvault",
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
 )
 
