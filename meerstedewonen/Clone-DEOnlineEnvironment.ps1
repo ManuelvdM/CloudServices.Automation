@@ -38,16 +38,16 @@ else {
     # Remove Admin Center Environments
     Write-Output "##[section] Starting: Remove of Environment"
     $Environments = Invoke-RestMethod -Uri "$BaseURL/$TargetEnvironmentName" -Method DELETE -Headers $Header
-}
 
-#Check if Environment is removed
-$Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
-while (($Environments.status -eq "Active") -or ($Environments.status -eq "SoftDeleting")) {
-    Write-Output "Environment $TargetEnvironmentName is not removed yet"
-    sleep 15
+    #Check if Environment is removed
     $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
+    while (($Environments.status -eq "Active") -or ($Environments.status -eq "SoftDeleting")) {
+        Write-Output "Environment $TargetEnvironmentName is not removed yet"
+        sleep 15
+        $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $TargetEnvironmentName}
+    }
+    Write-Output "##[section] Finished: Remove of Environment"
 }
-Write-Output "##[section] Finished: Remove of Environment"
 
 #Copy Environment
 $Body = @{environmentName=$TargetEnvironmentName;type="Sandbox"}
