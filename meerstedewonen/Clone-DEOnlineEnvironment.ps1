@@ -9,9 +9,9 @@ param(
     [Parameter(Mandatory = $false)][string] $RefreshTokenKeyvaultSecretName = "RefreshTokenAutomation"
 )
 
-Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
+Write-Output "##[section] Starting: Installing bccontainerhelper modules"
 Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
-Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
+Write-Output "##[section] Finishing: Installing bccontainerhelper modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
 $RefreshToken = Get-AzKeyVaultSecret -VaultName $RefreshTokenKeyvaultName -Name $RefreshTokenKeyvaultSecretName -AsPlainText
@@ -27,7 +27,7 @@ $BaseURL= "https://api.businesscentral.dynamics.com//admin/v2.19/applications/DE
 $Environments = (Invoke-RestMethod -Uri $BaseURL -Method GET -Headers $Header).value
 
 #Rename Environment
-if ($BackupEnvironment) {
+if ($BackupEnvironment -eq "1") {
     Write-Output "##[section] Starting: Rename of Environment"
     $Body = @{NewEnvironmentName="$($TargetEnvironmentName)" + "_oud"}
     $json = $Body | ConvertTo-Json

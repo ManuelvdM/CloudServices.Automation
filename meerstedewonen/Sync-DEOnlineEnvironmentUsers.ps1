@@ -9,9 +9,9 @@ param(
     [Parameter(Mandatory = $false)][string] $CompanyName = "MeerstedeWonen"
 )
 
-Write-Output "##[section] Starting: Installing cdsa PowerShell modules"
+Write-Output "##[section] Starting: Installing bccontainerhelper modules"
 Install-Module -Name 'bccontainerhelper' -Repository PSGallery -Force
-Write-Output "##[section] Finishing: Installing cdsa PowerShell modules"
+Write-Output "##[section] Finishing: Installing bccontainerhelper modules"
 
 Write-Output "Start Getting RefreshToken from Keyvault"
 $RefreshToken = Get-AzKeyVaultSecret -VaultName $RefreshTokenKeyvaultName -Name $RefreshTokenKeyvaultSecretName -AsPlainText
