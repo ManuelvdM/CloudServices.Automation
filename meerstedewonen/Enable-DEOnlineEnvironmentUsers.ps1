@@ -1,7 +1,5 @@
 param(
     # Environment variables
-    [Parameter(Mandatory = $false)][string] $AccountsKeyVaultName = $env:ACCOUNTSKEYVAULTNAME,
-    [Parameter(Mandatory = $false)][string] $GeneralKeyVaultName = $env:GENERALKEYVAULTNAME,
     [Parameter(Mandatory = $false)][string] $SourceEnvironmentName = $env:SOURCEENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $TargetEnvironmentName = $env:TARGETENVIRONMENTNAME,
     [Parameter(Mandatory = $false)][string] $BackupEnvironment = $env:BACKUPENVIRONMENT,
