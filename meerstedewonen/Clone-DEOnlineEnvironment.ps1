@@ -28,6 +28,23 @@ $Environments = (Invoke-RestMethod -Uri $BaseURL -Method GET -Headers $Header).v
 
 #Rename Environment
 if ($BackupEnvironment -eq "1") {
+
+    if ($Environments | Where-Object {$_.name -eq "$($TargetEnvironmentName)" + "_oud"}) {
+        Write-Output "##[section] Starting: Remove of Environment $($TargetEnvironmentName + "_oud")"
+        $Environments = Invoke-RestMethod -Uri "$BaseURL/$($TargetEnvironmentName)" + "_oud" -Method DELETE -Headers $Header
+        sleep 15
+        Write-Output "##[section] Finished: Remove of Environment $($TargetEnvironmentName + "_oud")"
+
+        #Check if Environment is removed
+        $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($TargetEnvironmentName) + "_oud"}
+        while (($Environments.status -eq "Active") -or ($Environments.status -eq "SoftDeleting")) {
+            Write-Output "Environment $($TargetEnvironmentName + "_oud") is not removed yet"
+            sleep 15
+            $Environments = (Invoke-RestMethod -Uri "$BaseURL" -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($TargetEnvironmentName) + "_oud"}
+        }
+        Write-Output "##[section] Finished: Remove of Environment $($TargetEnvironmentName + "_oud")"
+    }
+
     Write-Output "##[section] Starting: Rename of Environment"
     $Body = @{NewEnvironmentName="$($TargetEnvironmentName)" + "_oud"}
     $json = $Body | ConvertTo-Json
@@ -66,5 +83,3 @@ while ($Environments.status -eq "Preparing") {
 }
 
 Write-Output "##[section] Finished: Clone of environment $SourceEnvironmentName to $TargetEnvironmentName"
-
-
