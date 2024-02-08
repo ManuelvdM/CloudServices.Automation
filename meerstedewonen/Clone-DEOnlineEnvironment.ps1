@@ -31,7 +31,7 @@ if ($BackupEnvironment -eq "1") {
 
     if ($Environments | Where-Object {$_.name -eq "$($TargetEnvironmentName)" + "_oud"}) {
         Write-Output "##[section] Starting: Remove of Environment $($TargetEnvironmentName + "_oud")"
-        $Environments = Invoke-RestMethod -Uri "$BaseURL/$($TargetEnvironmentName)" + "_oud" -Method DELETE -Headers $Header
+        $Environments = Invoke-RestMethod -Uri "$BaseURL/$($TargetEnvironmentName + "_oud")" -Method DELETE -Headers $Header
         sleep 15
         Write-Output "##[section] Finished: Remove of Environment $($TargetEnvironmentName + "_oud")"
 
