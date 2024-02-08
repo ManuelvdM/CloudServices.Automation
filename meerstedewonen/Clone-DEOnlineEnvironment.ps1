@@ -50,6 +50,7 @@ else {
 }
 
 #Copy Environment
+sleep 15
 $Body = @{environmentName=$TargetEnvironmentName;type="Sandbox"}
 $json = $Body | ConvertTo-Json
 $Environments = Invoke-RestMethod -Uri "$BaseURL/$SourceEnvironmentName/copy" -Method POST -Body $json -Verbose -Headers $Header
