@@ -25,7 +25,8 @@ $CompanyId = ((Invoke-RestMethod -Uri $AutomationURL -Method GET -Headers $Heade
 
 #Get Enabled Users MeerstedeWonen
 $UserAutomationURL = $AutomationURL + "($CompanyId)/users"
-$MeerstedeWonenUsers = (Invoke-RestMethod -Uri $UserAutomationURL -Method GET -Headers $Header).value | where-object {($_.state -eq "Enabled") -and ($_.userName -notlike "*admin*")}
+$MeerstedeWonenUsers = (Invoke-RestMethod -Uri $UserAutomationURL -Method GET -Headers $Header).value | where-object {($_.state -eq "Enabled") -and ($_.userName -notlike "*admin*") -and 
+($_.userName -notlike "*S2S*") -and ($_.userName -notlike "*ZIG*")}
 
 Write-Output "##[section] Starting: Granting SUPER permissions"
 foreach ($MeerstedeWonenUser in $MeerstedeWonenUsers){
