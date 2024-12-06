@@ -20,13 +20,13 @@ $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
 #Get Company Id
-$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$TargetEnvironmentName/api/microsoft/automation/v2.0/companies" 
+$AutomationURL= "https://api.dynamicsempire.nl/v2.0/$TargetEnvironmentName/api/microsoft/automation/v2.0/companies" 
 $CompanyId = ((Invoke-RestMethod -Uri $AutomationURL -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($CompanyName)}).id
 
 #Get Enabled Users MeerstedeWonen
 $UserAutomationURL = $AutomationURL + "($CompanyId)/users"
 $MeerstedeWonenUsers = (Invoke-RestMethod -Uri $UserAutomationURL -Method GET -Headers $Header).value | where-object {($_.state -eq "Enabled") -and ($_.userName -notlike "*admin*") -and 
-($_.userName -notlike "*S2S*") -and ($_.userName -notlike "*ZIG*")}
+($_.userName -notlike "*S2S*") -and ($_.userName -notlike "*ZIG*") -and ($_.userName -notlike "*BRYDER*") -and ($_.userName -notlike "*Document Central*")}
 
 Write-Output "##[section] Starting: Granting SUPER permissions"
 foreach ($MeerstedeWonenUser in $MeerstedeWonenUsers){

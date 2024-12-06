@@ -21,7 +21,7 @@ $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
 #Get Company Id
-$AutomationURL= "https://api.businesscentral.dynamics.com/v2.0/$SourceEnvironmentName/api/microsoft/automation/v2.0/companies" 
+$AutomationURL= "https://api.dynamicsempire.nl/v2.0/$SourceEnvironmentName/api/microsoft/automation/v2.0/companies" 
 $CompanyId = ((Invoke-RestMethod -Uri $AutomationURL -Method GET -Headers $Header).value | Where-Object {$_.name -eq $($CompanyName)}).id
 
 #Get Enabled Users MeerstedeWonen

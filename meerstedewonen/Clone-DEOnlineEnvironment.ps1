@@ -21,7 +21,7 @@ $Context = New-BcAuthContext -refreshToken $RefreshToken
 $Header = @{Acceptlanguage="nl-NL";Authorization="Bearer $($Context.accesstoken)";"Content-Type"="application/json" }
 
 # BaseUrl admin api
-$BaseURL= "https://api.businesscentral.dynamics.com//admin/v2.19/applications/DEOnline/environments"
+$BaseURL= "https://api.dynamicsempire.nl/admin/v2.19/applications/DEOnline/environments"
 
 # Get Admin Center Environments    
 $Environments = (Invoke-RestMethod -Uri $BaseURL -Method GET -Headers $Header).value
