@@ -1,0 +1,33 @@
+{
+    "adminObjectId":"741ced9e-6c50-4562-9679-f4ef43357e4c",
+    "adminUserId": "DeOnlineAppMgmt@cegeka-dsa.nl",
+    "adminAppId": "68cd9874-61ad-4066-9fa8-f707321d5918",
+    "adminCenterAppId": "d7f8b201-f12f-43c6-b838-89a98b592fb4",
+    "tenantIdCegeka": "42151053-0193-47aa-9e81-effd81f772cc",
+    "tenantIdCDSA": "4a4699e8-81d6-4b55-96a5-37d69964a799",
+    "principals":[ {
+                        "id": "fa97570b-aaf3-4c8b-b446-a8aa28e8b5d8",
+                        "type":"Application",
+                        "name":"AppManagement API Reader (cdsa.nl)",
+                        "roles":[
+                            "Reader"
+                        ]
+                   },
+                   {
+                        "id": "250d5079-ffc5-4d5c-aca7-de2506deefc7",
+                        "type":"Application",
+                        "name":"AdminAPI (cdsa.nl)",
+                        "roles":[
+                            "Reader"
+                        ]
+                    },
+                    {
+                        "id": "5d50448f-0eff-4d20-9b81-8c5298866aff",
+                        "type":"Application",
+                        "name":"AppManagement API Contributor (cdsa.nl)",
+                        "roles":[
+                            "Contributor"
+                        ]
+                    }
+        ]
+}
